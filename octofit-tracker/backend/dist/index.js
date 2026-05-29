@@ -10,15 +10,11 @@ const Activity_1 = __importDefault(require("./models/Activity"));
 const Leaderboard_1 = __importDefault(require("./models/Leaderboard"));
 const Workout_1 = __importDefault(require("./models/Workout"));
 const database_1 = require("./config/database");
+const server_1 = require("./server");
 const app = (0, express_1.default)();
-const port = 8000;
-const codespaceName = process.env.CODESPACE_NAME;
-const baseUrl = codespaceName
-    ? `https://${codespaceName}-8000.app.github.dev`
-    : 'http://localhost:8000';
 app.use(express_1.default.json());
 app.get('/api/health', (_req, res) => {
-    res.json({ status: 'ok', baseUrl });
+    res.json({ status: 'ok', baseUrl: server_1.baseUrl });
 });
 app.get('/api/users/', async (_req, res) => {
     const items = await User_1.default.find({}, '-__v').sort({ createdAt: -1 }).lean();
@@ -54,20 +50,20 @@ app.get('/api/workouts/', async (_req, res) => {
 });
 app.get('/api/', (_req, res) => {
     res.json({
-        baseUrl,
+        baseUrl: server_1.baseUrl,
         endpoints: {
-            users: `${baseUrl}/api/users/`,
-            teams: `${baseUrl}/api/teams/`,
-            activities: `${baseUrl}/api/activities/`,
-            leaderboard: `${baseUrl}/api/leaderboard/`,
-            workouts: `${baseUrl}/api/workouts/`,
+            users: `${server_1.baseUrl}/api/users/`,
+            teams: `${server_1.baseUrl}/api/teams/`,
+            activities: `${server_1.baseUrl}/api/activities/`,
+            leaderboard: `${server_1.baseUrl}/api/leaderboard/`,
+            workouts: `${server_1.baseUrl}/api/workouts/`,
         },
     });
 });
 (0, database_1.connectDatabase)()
     .then(() => {
-    app.listen(port, () => {
-        console.log(`OctoFit backend listening on port ${port}`);
+    app.listen(server_1.port, () => {
+        console.log(`OctoFit backend listening on port ${server_1.port}`);
     });
 })
     .catch((error) => {

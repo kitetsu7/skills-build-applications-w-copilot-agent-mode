@@ -5,13 +5,9 @@ import ActivityModel from './models/Activity';
 import LeaderboardModel from './models/Leaderboard';
 import WorkoutModel from './models/Workout';
 import { connectDatabase } from './config/database';
+import { baseUrl, port } from './server';
 
 const app = express();
-const port = 8000;
-const codespaceName = process.env.CODESPACE_NAME;
-const baseUrl = codespaceName
-  ? `https://${codespaceName}-8000.app.github.dev`
-  : 'http://localhost:8000';
 app.use(express.json());
 
 app.get('/api/health', (_req, res) => {
