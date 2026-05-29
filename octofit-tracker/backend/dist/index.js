@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
 const User_1 = __importDefault(require("./models/User"));
 const Team_1 = __importDefault(require("./models/Team"));
 const Activity_1 = __importDefault(require("./models/Activity"));
@@ -13,6 +14,7 @@ const database_1 = require("./config/database");
 const server_1 = require("./server");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
+app.use((0, cors_1.default)());
 app.get('/api/health', (_req, res) => {
     res.json({ status: 'ok', baseUrl: server_1.baseUrl });
 });

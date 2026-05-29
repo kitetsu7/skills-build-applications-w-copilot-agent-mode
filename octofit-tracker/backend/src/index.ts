@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import UserModel from './models/User';
 import TeamModel from './models/Team';
 import ActivityModel from './models/Activity';
@@ -9,6 +10,7 @@ import { baseUrl, port } from './server';
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', baseUrl });
