@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getApiBaseUrl, getResourceUrl, normalizeResponse } from './apiClient';
+import { getApiBaseUrl, normalizeResponse } from './apiClient';
 
-function ResourceView({ resourceName, title }) {
+function ResourceView({ resourceName, title, endpoint }) {
   const [items, setItems] = useState([]);
   const [count, setCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const endpoint = useMemo(() => getResourceUrl(resourceName), [resourceName]);
+  const endpointUrl = useMemo(() => endpoint, [endpoint]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -17,7 +17,7 @@ function ResourceView({ resourceName, title }) {
       setError('');
 
       try {
-        const response = await fetch(endpoint, { signal: controller.signal });
+        const response = await fetch(endpointUrl, { signal: controller.signal });
 
         if (!response.ok) {
           throw new Error(`Request failed with status ${response.status}`);
@@ -40,7 +40,7 @@ function ResourceView({ resourceName, title }) {
     loadResource();
 
     return () => controller.abort();
-  }, [endpoint]);
+  }, [endpointUrl]);
 
   return (
     <section className="card shadow-sm">
