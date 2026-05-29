@@ -3,17 +3,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = __importDefault(require("mongoose"));
 const User_1 = __importDefault(require("../models/User"));
 const Team_1 = __importDefault(require("../models/Team"));
 const Activity_1 = __importDefault(require("../models/Activity"));
 const Leaderboard_1 = __importDefault(require("../models/Leaderboard"));
 const Workout_1 = __importDefault(require("../models/Workout"));
-const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/octofit_db';
+const database_1 = require("../config/database");
 async function seed() {
     // Seed the octofit_db database with test data
     console.log('Seed the octofit_db database with test data');
-    await mongoose_1.default.connect(mongoUri);
+    await (0, database_1.connectDatabase)();
     await Promise.all([
         User_1.default.deleteMany({}),
         Team_1.default.deleteMany({}),
@@ -160,10 +159,10 @@ async function seed() {
         Workout_1.default.countDocuments(),
     ]);
     console.log(`Seed complete: users=${userCount}, teams=${teamCount}, activities=${activityCount}, leaderboard=${leaderboardCount}, workouts=${workoutCount}`);
-    await mongoose_1.default.disconnect();
+    await (0, database_1.disconnectDatabase)();
 }
 seed().catch(async (error) => {
     console.error('Seeding failed:', error);
-    await mongoose_1.default.disconnect();
+    await (0, database_1.disconnectDatabase)();
     process.exit(1);
 });
