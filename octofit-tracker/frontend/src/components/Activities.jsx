@@ -1,7 +1,9 @@
 import ResourceView from './ResourceView';
 
 function Activities() {
-  const codespaceName = import.meta.env.VITE_CODESPACE_NAME;
+  const codespaceName =
+    import.meta.env.VITE_CODESPACE_NAME ||
+    window.location.hostname.match(/^(.*)-\d+\.app\.github\.dev$/)?.[1];
   const endpoint = codespaceName
     ? `https://${codespaceName}-8000.app.github.dev/api/activities/`
     : 'http://localhost:8000/api/activities/';
