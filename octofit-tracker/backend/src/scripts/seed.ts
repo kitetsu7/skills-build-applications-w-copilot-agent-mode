@@ -1,0 +1,178 @@
+import UserModel from '../models/User';
+import TeamModel from '../models/Team';
+import ActivityModel from '../models/Activity';
+import LeaderboardModel from '../models/Leaderboard';
+import WorkoutModel from '../models/Workout';
+import { connectDatabase, disconnectDatabase } from '../config/database';
+
+async function seed(): Promise<void> {
+  // Seed the octofit_db database with test data
+  console.log('Seed the octofit_db database with test data');
+
+  await connectDatabase();
+
+  await Promise.all([
+    UserModel.deleteMany({}),
+    TeamModel.deleteMany({}),
+    ActivityModel.deleteMany({}),
+    LeaderboardModel.deleteMany({}),
+    WorkoutModel.deleteMany({}),
+  ]);
+
+  const users = await UserModel.insertMany([
+    {
+      name: 'Avery Johnson',
+      email: 'avery.johnson@octofit.test',
+      level: 'intermediate',
+      weeklyGoal: 5,
+    },
+    {
+      name: 'Sofia Martinez',
+      email: 'sofia.martinez@octofit.test',
+      level: 'advanced',
+      weeklyGoal: 6,
+    },
+    {
+      name: 'Ethan Brown',
+      email: 'ethan.brown@octofit.test',
+      level: 'beginner',
+      weeklyGoal: 3,
+    },
+    {
+      name: 'Mina Patel',
+      email: 'mina.patel@octofit.test',
+      level: 'intermediate',
+      weeklyGoal: 4,
+    },
+  ]);
+
+  const [avery, sofia, ethan, mina] = users;
+
+  await TeamModel.insertMany([
+    {
+      name: 'Downtown Dashers',
+      city: 'Seattle',
+      members: [avery._id, ethan._id],
+      points: 980,
+    },
+    {
+      name: 'Summit Lifters',
+      city: 'Portland',
+      members: [sofia._id, mina._id],
+      points: 1125,
+    },
+  ]);
+
+  await ActivityModel.insertMany([
+    {
+      user: avery._id,
+      type: 'run',
+      durationMinutes: 42,
+      caloriesBurned: 465,
+      performedAt: new Date('2026-05-20T07:30:00.000Z'),
+    },
+    {
+      user: sofia._id,
+      type: 'strength',
+      durationMinutes: 55,
+      caloriesBurned: 520,
+      performedAt: new Date('2026-05-21T18:15:00.000Z'),
+    },
+    {
+      user: ethan._id,
+      type: 'cycle',
+      durationMinutes: 30,
+      caloriesBurned: 290,
+      performedAt: new Date('2026-05-22T06:50:00.000Z'),
+    },
+    {
+      user: mina._id,
+      type: 'yoga',
+      durationMinutes: 40,
+      caloriesBurned: 180,
+      performedAt: new Date('2026-05-23T12:10:00.000Z'),
+    },
+    {
+      user: avery._id,
+      type: 'swim',
+      durationMinutes: 35,
+      caloriesBurned: 340,
+      performedAt: new Date('2026-05-24T08:05:00.000Z'),
+    },
+  ]);
+
+  await LeaderboardModel.insertMany([
+    {
+      user: sofia._id,
+      score: 2540,
+      rank: 1,
+      streakDays: 18,
+      weekOf: new Date('2026-05-25T00:00:00.000Z'),
+    },
+    {
+      user: avery._id,
+      score: 2360,
+      rank: 2,
+      streakDays: 14,
+      weekOf: new Date('2026-05-25T00:00:00.000Z'),
+    },
+    {
+      user: mina._id,
+      score: 2015,
+      rank: 3,
+      streakDays: 10,
+      weekOf: new Date('2026-05-25T00:00:00.000Z'),
+    },
+    {
+      user: ethan._id,
+      score: 1840,
+      rank: 4,
+      streakDays: 7,
+      weekOf: new Date('2026-05-25T00:00:00.000Z'),
+    },
+  ]);
+
+  await WorkoutModel.insertMany([
+    {
+      title: 'Tempo Run Intervals',
+      difficulty: 'intermediate',
+      targetMuscleGroups: ['legs', 'core'],
+      durationMinutes: 45,
+      suggestedFor: [avery._id, mina._id],
+    },
+    {
+      title: 'Upper Body Power Circuit',
+      difficulty: 'advanced',
+      targetMuscleGroups: ['chest', 'back', 'shoulders'],
+      durationMinutes: 50,
+      suggestedFor: [sofia._id],
+    },
+    {
+      title: 'Beginner Mobility Flow',
+      difficulty: 'beginner',
+      targetMuscleGroups: ['hips', 'hamstrings', 'lower back'],
+      durationMinutes: 25,
+      suggestedFor: [ethan._id],
+    },
+  ]);
+
+  const [userCount, teamCount, activityCount, leaderboardCount, workoutCount] = await Promise.all([
+    UserModel.countDocuments(),
+    TeamModel.countDocuments(),
+    ActivityModel.countDocuments(),
+    LeaderboardModel.countDocuments(),
+    WorkoutModel.countDocuments(),
+  ]);
+
+  console.log(
+    `Seed complete: users=${userCount}, teams=${teamCount}, activities=${activityCount}, leaderboard=${leaderboardCount}, workouts=${workoutCount}`
+  );
+
+  await disconnectDatabase();
+}
+
+seed().catch(async (error: unknown) => {
+  console.error('Seeding failed:', error);
+  await disconnectDatabase();
+  process.exit(1);
+});

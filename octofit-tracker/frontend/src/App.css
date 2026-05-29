@@ -1,0 +1,10 @@
+.app-shell {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f5f7fb 0%, #ffffff 220px);
+}
+
+.data-preview {
+  max-height: 58vh;
+  overflow: auto;
+  font-size: 0.8rem;
+}
